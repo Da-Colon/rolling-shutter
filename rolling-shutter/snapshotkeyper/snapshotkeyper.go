@@ -70,7 +70,7 @@ func (snkpr *snapshotkeyper) Start(ctx context.Context, runner service.Runner) e
 		return err
 	}
 
-	err = snkpr.dbpool.BeginFunc(db.WrapContext(ctx, database.Definition.Validate))
+	err = dbpool.BeginFunc(db.WrapContext(ctx, database.Definition.Validate))
 	if err != nil {
 		return err
 	}
