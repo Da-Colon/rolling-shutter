@@ -41,6 +41,14 @@ func initDB(cfg *snapshot.Config) error {
 		return errors.Wrap(err, "failed to connect to database")
 	}
 	defer dbpool.Close()
+	// Ensure meta_inf table exists before any validation or creation
+	createMetaInfSQL := `
+        CREATE TABLE IF NOT EXISTS meta_inf (
+            key VARCHAR PRIMARY KEY,
+            value VARCHAR NOT NULL
+        );
+    `
+	dbpool.Exec(ctx, createMetaInfSQL)
 	return db.InitDB(ctx, dbpool, database.Definition.Name(), database.Definition)
 }
 
