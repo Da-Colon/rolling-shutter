@@ -23,7 +23,8 @@ services:
       start_period: "30s"
       start_interval: "2s"
     logging: *logging
-
+    ports:
+      - "5432:5432"
   geth:
     build:
       dockerfile: docker/build-src/geth/Dockerfile
@@ -46,6 +47,9 @@ services:
       start_period: "30s"
       start_interval: "2s"
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   deploy-contracts:
     build:
@@ -61,6 +65,9 @@ services:
       geth:
         condition: service_healthy
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   chain-0-validator:
     image: snapshutter
@@ -228,6 +235,9 @@ services:
     labels:
       caddy: live.snapshot.shutter.network
       caddy.reverse_proxy: "{{upstreams 8754}}"
+    networks:
+      - default
+      - shared-network
 
   bootnode-0:
     image: snapshutter
@@ -304,6 +314,9 @@ services:
       geth:
         condition: service_healthy
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   keyper-1:
     image: snapshutter
@@ -330,6 +343,9 @@ services:
       geth:
         condition: service_healthy
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   keyper-2:
     image: snapshutter
@@ -356,6 +372,9 @@ services:
       geth:
         condition: service_healthy
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   keyper-3:
     image: snapshutter
@@ -380,6 +399,9 @@ services:
       geth:
         condition: service_healthy
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   caddy:
     image: lucaslorentz/caddy-docker-proxy:ci-alpine
@@ -397,6 +419,9 @@ services:
     labels:
       caddy.email: devops@brainbot.com
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   dummyserver:
     build:
@@ -418,9 +443,16 @@ services:
     profiles:
       - dev
     logging: *logging
+    networks:
+      - default
+      - shared-network
 
   dockerize:
     image: jwilder/dockerize
     profiles:
       - script
     logging: *logging
+
+networks:
+  shared-network:
+    external: true
